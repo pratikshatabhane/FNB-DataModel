@@ -6,7 +6,6 @@
     <title>Sales Report</title>
     <link rel="stylesheet" href="reports.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -29,7 +28,6 @@
             left: 0;
             top: 0;
             box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-            transition: width 0.3s;
         }
         .sidebar h2 {
             text-align: center;
@@ -45,49 +43,61 @@
             text-align: left;
             transition: 0.3s;
             border-radius: 5px;
-            cursor: pointer;
         }
         .sidebar ul li a {
             color: black;
             text-decoration: none;
-            display: flex;
-            align-items: center;
+            display: block;
             font-weight: bold;
-            font-size: 16px;
         }
         .sidebar ul li:hover {
             background: white;
             transform: scale(1.05);
-        }
-        .sidebar ul li a i {
-            margin-right: 10px;
         }
         .content {
             margin-left: 260px;
             padding: 20px;
             width: 100%;
         }
-        .upload-container {
+        .report-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .alert {
+            background: #f87171;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .filter-options {
             text-align: center;
             margin-bottom: 20px;
         }
-        .upload-container button {
-            padding: 10px;
+        .filter-options select, .upload-container input, .upload-container button {
+            padding: 8px;
             font-size: 14px;
-            background-color: #fbbf24;
-            border: none;
             border-radius: 5px;
-            cursor: pointer;
+            border: 1px solid #ccc;
+            margin: 5px;
         }
-        .upload-container button:hover {
-            background-color: #e6a700;
+        .upload-container {
+            text-align: center;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <div class="dashboard">
         <nav class="sidebar">
-            <h2>📊 Menu</h2>
+            <h2>Menu</h2>
             <ul>
                 <li><a href="index.html">🏠 Dashboard</a></li>
                 <li><a href="sales.html">📊 Sales Report</a></li>
@@ -102,63 +112,97 @@
             <header>
                 <h1>📊 Sales Report</h1>
             </header>
+            <div class="alert">🚀 Upgrade to Pro for Advanced Sales Insights!</div>
+            
             <div class="upload-container">
                 <label for="csvUpload">Upload CSV File:</label>
                 <input type="file" id="csvUpload" accept=".csv">
                 <button onclick="processCSV()">Submit</button>
             </div>
             
+            <div class="filter-options">
+                <label for="report-range">View Report By: </label>
+                <select id="report-range" onchange="updateChart()">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly" selected>Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+            </div>
+            
             <section id="sales" class="report-section">
                 <h2>Sales Performance</h2>
+                <p>Track your sales performance over different time periods.</p>
                 <canvas id="salesChart"></canvas>
+            </section>
+            
+            <section id="salesOverview" class="report-section">
+                <h2>Sales Overview</h2>
+                <p>Breakdown of total sales in a pie chart.</p>
+                <canvas id="salesPieChart"></canvas>
             </section>
         </div>
     </div>
     
     <script>
-        function processCSV() {
-            const fileInput = document.getElementById("csvUpload");
-            const file = fileInput.files[0];
-            if (!file) {
-                alert("Please upload a CSV file.");
-                return;
-            }
-            
-            Papa.parse(file, {
-                complete: function(results) {
-                    const rows = results.data;
-                    const labels = [];
-                    const data = [];
-                    
-                    for (let i = 1; i < rows.length; i++) {
-                        if (rows[i][0] && rows[i][1]) {
-                            labels.push(rows[i][0]);
-                            data.push(parseFloat(rows[i][1]));
-                        }
-                    }
-                    
-                    updateChart(labels, data);
+        function updateChart(data) {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Sales',
+                        data: data.values,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                }
+            });
+
+            const pieCtx = document.getElementById('salesPieChart').getContext('2d');
+            new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Sales Distribution',
+                        data: data.values,
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#FF9800']
+                    }]
+                },
+                options: {
+                    responsive: true,
                 }
             });
         }
-        
-        function updateChart(labels = ["Jan", "Feb", "Mar", "Apr", "May"], data = [5000, 7000, 9000, 11000, 13000]) {
-            new Chart(document.getElementById("salesChart"), { 
-                type: "line", 
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: "Sales ($)",
-                        data: data,
-                        borderColor: "#fbbf24",
-                        backgroundColor: "rgba(251, 191, 36, 0.3)",
-                        borderWidth: 3,
-                        pointRadius: 6,
-                        pointBackgroundColor: "#fbbf24",
-                        pointHoverRadius: 8,
-                    }]
-                }
-            });
+
+        function processCSV() {
+            const fileInput = document.getElementById('csvUpload').files[0];
+            if (!fileInput) {
+                alert("Please upload a CSV file");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const csvData = event.target.result.split('\n').slice(1);
+                const labels = [];
+                const values = [];
+                csvData.forEach(row => {
+                    const cols = row.split(',');
+                    if (cols.length >= 2) {
+                        labels.push(cols[0].trim());
+                        values.push(parseFloat(cols[1].trim()));
+                    }
+                });
+                updateChart({ labels, values });
+            };
+            reader.readAsText(fileInput);
         }
     </script>
 </body>

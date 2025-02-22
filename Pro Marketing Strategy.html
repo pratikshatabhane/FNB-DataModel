@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Marketing Strategy</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .dashboard {
+            display: flex;
+            width: 100%;
+        }
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(180deg, #fbbf24, #ffd700);
+            color: black;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+            transition: width 0.3s;
+        }
+        .sidebar h2 {
+            text-align: center;
+            font-weight: bold;
+            color: black;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 15px;
+            text-align: left;
+            transition: 0.3s;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .sidebar ul li a {
+            color: black;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .sidebar ul li:hover {
+            background: white;
+            transform: scale(1.05);
+        }
+        .sidebar ul li a i {
+            margin-right: 10px;
+        }
+        .content {
+            margin-left: 280px;
+            padding: 40px;
+            width: calc(100% - 280px);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="sidebar">
+            <h2>📊 Pro Features</h2>
+            <ul>
+                <li><a href="index.html">🏠 Dashboard</a></li>
+                <li><a href="sales.html">📊 Sales Report</a></li>
+                <li><a href="marketing.html">📢 Marketing Strategies</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <header>
+                <h1>📢 Marketing Strategy Suggestions</h1>
+            </header>
+            <div class="input-section">
+                <label>Current Sales (₹): </label>
+                <input type="number" id="currentSales" placeholder="Enter current sales">
+                <label>Target Sales (₹): </label>
+                <input type="number" id="targetSales" placeholder="Enter target sales">
+                <button onclick="generateStrategies()">Get Strategies</button>
+            </div>
+            <section id="strategyResults" class="report-section">
+                <h2>Suggested Strategies</h2>
+                <ul id="strategyList"></ul>
+            </section>
+        </div>
+    </div>
+    
+    <script>
+        function generateStrategies() {
+            const currentSales = parseFloat(document.getElementById("currentSales").value);
+            const targetSales = parseFloat(document.getElementById("targetSales").value);
+            const strategyList = document.getElementById("strategyList");
+            strategyList.innerHTML = "";
+
+            if (isNaN(currentSales) || isNaN(targetSales) || currentSales >= targetSales) {
+                alert("Please enter valid sales values.");
+                return;
+            }
+            
+            const salesGap = targetSales - currentSales;
+            const strategies = [];
+            
+            if (salesGap <= targetSales * 0.2) {
+                strategies.push("Offer limited-time discounts to attract more customers.");
+                strategies.push("Run social media ads targeting food lovers.");
+            } else if (salesGap <= targetSales * 0.4) {
+                strategies.push("Collaborate with influencers to promote your brand.");
+                strategies.push("Introduce customer loyalty programs with rewards.");
+                strategies.push("Use email marketing for repeat customer engagement.");
+            } else {
+                strategies.push("Launch aggressive digital marketing campaigns (Google, Facebook, Instagram Ads).");
+                strategies.push("Host local food events or pop-up promotions.");
+                strategies.push("Offer bundled meal deals to boost order values.");
+            }
+            
+            strategies.forEach(strategy => {
+                const li = document.createElement("li");
+                li.textContent = strategy;
+                strategyList.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
