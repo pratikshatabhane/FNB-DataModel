@@ -30,6 +30,7 @@
             box-shadow: 4px 0 10px rgba(255, 204, 0, 0.3);
             display: flex;
             flex-direction: column;
+            transition: transform 0.3s ease-in-out;
         }
 
         .sidebar h2 {
@@ -50,17 +51,34 @@
         .sidebar ul li a {
             color: black;
             text-decoration: none;
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             padding: 12px;
             transition: 0.3s;
             border-radius: 5px;
             text-align: center;
+            font-size: 16px;
         }
 
         .sidebar ul li a:hover {
-            background: #fff;
+            background: black;
             color: #ffcc00;
             transform: scale(1.1);
+        }
+
+        /* Sidebar Toggle Button */
+        .menu-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #ffcc00;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            display: none;
+            border-radius: 5px;
         }
 
         /* Content Layout */
@@ -69,18 +87,22 @@
             padding: 20px;
             width: 100%;
             text-align: center;
+            transition: margin-left 0.3s;
         }
 
+        /* Centered Header (Logo + Title) */
         header {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             margin-bottom: 20px;
         }
 
         .logo {
-            height: 100px;
-            margin-right: 15px;
+            height: 170px;
+			width: 190px;
+            margin-bottom: 10px;
         }
 
         .grid {
@@ -134,70 +156,83 @@
             width: 100% !important;
             height: 350px !important;
         }
+
+        /* Responsive Sidebar */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 250px;
+            }
+            
+            .content {
+                margin-left: 0;
+            }
+
+            .menu-btn {
+                display: block;
+            }
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
     </style>
 </head>
 <body>
-    <div class="dashboard">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <h2>BistroConnect Insight</h2>
-            <ul>
-                <li><a href="index.html">🏠 Dashboard</a></li>
-                <li><a href="reports.html">📊 Reports</a></li>
-                <li><a href="settings.html">⚙️ Settings</a></li>
-                <li><a href="Pro Marketing Strategy.html">📈 Pro Marketing</a></li>
-                <li><a href="#logout">🚪 Logout</a></li>
-            </ul>
-        </nav>
-        
-        <!-- Main Content -->
-        <div class="content">
-            <header>
-                <img src="images/bistroconnect-removebg-preview.png" alt="Bistro Connect Logo" class="logo">
-                <h1>F&B Analytics Dashboard</h1>
-            </header>
-            
-            <div class="grid">
-                <div class="card">
-                    <h2>Sales Forecast</h2>
-                    <canvas id="salesChart"></canvas>
-                </div>
-                
-                <div class="card">
-                    <h2>Purchase Prediction</h2>
-                    <canvas id="purchaseChart"></canvas>
-                </div>
-                
-                <div class="card">
-                    <h2>Operational Cost Prediction</h2>
-                    <canvas id="costChart"></canvas>
-                </div>
-                
-                <div class="card upgrade">
-                    <h2>Upgrade to Pro</h2>
-                    <p>Unlock full AI-powered analytics and insights.</p>
-                    <button class="upgrade-btn" onclick="upgradeToPro()">Upgrade Now</button>
-                </div>
+    <!-- Sidebar Toggle Button -->
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <h2>BistroConnect Insight</h2>
+        <ul>
+            <li><a href="index.html">🏠 Dashboard</a></li>
+            <li><a href="reports.html">📊 Reports</a></li>
+            <li><a href="settings.html">⚙️ Settings</a></li>
+            <li><a href="Pro Marketing Strategy.html">📈 Pro Marketing</a></li>
+            <li><a href="#logout">🚪 Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content">
+        <header>
+            <img src="images/bistroconnect-removebg-preview.png" alt="Bistro Connect Logo" class="logo">
+            <h1>F&B Analytics Dashboard</h1>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <h2>Sales Forecast</h2>
+                <canvas id="salesChart"></canvas>
+            </div>
+
+            <div class="card">
+                <h2>Purchase Prediction</h2>
+                <canvas id="purchaseChart"></canvas>
+            </div>
+
+            <div class="card">
+                <h2>Operational Cost Prediction</h2>
+                <canvas id="costChart"></canvas>
+            </div>
+
+            <div class="card upgrade">
+                <h2>Upgrade to Pro</h2>
+                <p>Unlock full AI-powered analytics and insights.</p>
+                <button class="upgrade-btn" onclick="upgradeToPro()">Upgrade Now</button>
             </div>
         </div>
     </div>
-    
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const chartOptions = {
                 responsive: true,
-                maintainAspectRatio: false,
-                aspectRatio: 2,
-                scales: {
-                    x: { grid: { display: false }, ticks: { color: "white" } },
-                    y: { grid: { color: "rgba(255, 255, 255, 0.2)" }, ticks: { color: "white" } }
-                },
-                plugins: {
-                    legend: { labels: { color: "white" } }
-                }
+                maintainAspectRatio: false
             };
 
-            function createChart(canvasId, label, data, borderColor, bgColor) {
+            function createChart(canvasId, label, data, borderColor) {
                 new Chart(document.getElementById(canvasId), {
                     type: "line",
                     data: {
@@ -206,23 +241,26 @@
                             label: label,
                             data: data,
                             borderColor: borderColor,
-                            backgroundColor: bgColor,
+                            backgroundColor: borderColor + "50",
                             borderWidth: 3,
-                            pointRadius: 5,
-                            pointBackgroundColor: borderColor
+                            pointRadius: 5
                         }]
                     },
                     options: chartOptions
                 });
             }
 
-            createChart("salesChart", "Sales", [100, 150, 200, 250, 300], "#ffcc00", "rgba(255, 204, 0, 0.3)");
-            createChart("purchaseChart", "Purchase", [80, 100, 130, 170, 200], "#34d399", "rgba(52, 211, 153, 0.3)");
-            createChart("costChart", "Cost", [50, 70, 90, 110, 130], "#ef4444", "rgba(239, 68, 68, 0.3)");
+            createChart("salesChart", "Sales", [100, 150, 200, 250, 300], "#ffcc00");
+            createChart("purchaseChart", "Purchase", [80, 100, 130, 170, 200], "#34d399");
+            createChart("costChart", "Cost", [50, 70, 90, 110, 130], "#ef4444");
         });
 
         function upgradeToPro() {
             alert("🚀 Upgrading to Pro! Enjoy advanced AI analytics and premium insights.");
+        }
+
+        function toggleSidebar() {
+            document.querySelector(".sidebar").classList.toggle("open");
         }
     </script>
 </body>
