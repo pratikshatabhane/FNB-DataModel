@@ -4,13 +4,175 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings - F&B Dashboard</title>
-    <link rel="stylesheet" href="settings.css">
+    <style>
+        /* Global Styles */
+        :root {
+            --primary-color: #FFC107; /* Yellow */
+            --secondary-color: #4E4E4E; /* Dark Gray */
+            --background-light: #F5F5F5; /* White Theme */
+            --background-dark: #333333; /* Dark Theme */
+            --text-light: #333333;
+            --text-dark: #FFFFFF;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-light);
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: var(--secondary-color);
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: fixed;
+            height: 100%;
+            transition: 0.3s;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 12px;
+            margin: 5px 0;
+            background: var(--primary-color);
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .sidebar ul li:hover {
+            background: #ffb300;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: bold;
+            display: block;
+        }
+
+        /* Content Section */
+        .content {
+            flex-grow: 1;
+            margin-left: 260px;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--primary-color);
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 10px;
+        }
+
+        /* Settings Sections */
+        .settings-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label, select, input {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            background: var(--primary-color);
+            color: var(--text-light);
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #ffb300;
+        }
+
+        /* Dark Mode */
+        .dark-mode {
+            background-color: var(--background-dark);
+            color: var(--text-dark);
+        }
+
+        .dark-mode .settings-section {
+            background: #444;
+            color: white;
+        }
+
+        .dark-mode .sidebar {
+            background: black;
+        }
+
+        .dark-mode .sidebar ul li a {
+            color: black;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .content {
+                margin-left: 210px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 100px;
+                text-align: center;
+            }
+
+            .sidebar ul li {
+                font-size: 12px;
+            }
+
+            .content {
+                margin-left: 110px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard">
         <!-- Sidebar Menu -->
         <nav class="sidebar">
-            <h2>Menu</h2>
+            <h2>BistroConnect Insight</h2>
             <ul>
                 <li><a href="index.html">🏠 Dashboard</a></li>
                 <li><a href="reports.html">📊 Reports</a></li>
@@ -24,13 +186,13 @@
         
         <div class="content">
             <header>
-                <h1>Settings</h1>
+                Settings
             </header>
             
             <section id="general" class="settings-section">
                 <h2>General Settings</h2>
                 <label for="theme">Theme:</label>
-                <select id="theme">
+                <select id="theme" onchange="toggleTheme()">
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
                 </select>
@@ -68,6 +230,15 @@
 
         function updatePassword() {
             alert("Password updated successfully!");
+        }
+
+        function toggleTheme() {
+            let themeSelect = document.getElementById('theme');
+            if (themeSelect.value === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
         }
     </script>
 </body>
