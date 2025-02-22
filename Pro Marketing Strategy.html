@@ -7,10 +7,12 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
+        /* Full Page Styling */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #eef2f7;
             margin: 0;
             padding: 0;
             display: flex;
@@ -19,22 +21,23 @@
             display: flex;
             width: 100%;
         }
+
+        /* Sidebar Styling */
         .sidebar {
             width: 250px;
-            background: linear-gradient(180deg, #fbbf24, #ffd700);
-            color: black;
+            background: #2d3e50;
+            color: white;
             padding: 20px;
             height: 100vh;
             position: fixed;
             left: 0;
             top: 0;
             box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-            transition: width 0.3s;
         }
         .sidebar h2 {
             text-align: center;
-            font-weight: bold;
-            color: black;
+            margin-bottom: 20px;
+            color: #f1c40f;
         }
         .sidebar ul {
             list-style: none;
@@ -42,30 +45,90 @@
         }
         .sidebar ul li {
             padding: 15px;
-            text-align: left;
-            transition: 0.3s;
-            border-radius: 5px;
             cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
         }
         .sidebar ul li a {
-            color: black;
             text-decoration: none;
+            color: white;
             display: flex;
             align-items: center;
             font-weight: bold;
-            font-size: 16px;
         }
-        .sidebar ul li:hover {
-            background: white;
-            transform: scale(1.05);
-        }
-        .sidebar ul li a i {
+        .sidebar ul li i {
             margin-right: 10px;
         }
+        .sidebar ul li:hover {
+            background: #f1c40f;
+            color: #2d3e50;
+        }
+        .active {
+            background: #f1c40f;
+            color: #2d3e50;
+        }
+
+        /* Main Content Styling */
         .content {
             margin-left: 280px;
             padding: 40px;
             width: calc(100% - 280px);
+        }
+        header h1 {
+            color: #2d3e50;
+            font-size: 24px;
+        }
+
+        /* Input Section */
+        .input-section {
+            margin-bottom: 20px;
+        }
+        .input-section input {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .input-section button {
+            padding: 8px 12px;
+            background: #f1c40f;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            color: #2d3e50;
+            font-weight: bold;
+        }
+        .input-section button:hover {
+            background: #d4ac0d;
+        }
+
+        /* Strategy List */
+        .report-section {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .report-section h2 {
+            color: #2d3e50;
+        }
+        .report-section ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        .report-section li {
+            margin: 5px 0;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            width: 100%;
+            height: 450px;
+            margin: 20px auto;
+        }
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
         }
     </style>
 </head>
@@ -74,9 +137,9 @@
         <nav class="sidebar">
             <h2>📊 Pro Features</h2>
             <ul>
-                <li><a href="index.html">🏠 Dashboard</a></li>
-                <li><a href="sales.html">📊 Sales Report</a></li>
-                <li><a href="marketing.html">📢 Marketing Strategies</a></li>
+                <li><a href="index.html"><i>🏠</i>Dashboard</a></li>
+                <li><a href="sales.html" class="active"><i>📊</i>Sales Report</a></li>
+                <li><a href="marketing.html"><i>📢</i>Marketing Strategies</a></li>
             </ul>
         </nav>
         
@@ -90,11 +153,15 @@
                 <label>Target Sales (₹): </label>
                 <input type="number" id="targetSales" placeholder="Enter target sales">
                 <button onclick="generateStrategies()">Get Strategies</button>
+                <button onclick="downloadReport()">Download Report</button>
             </div>
             <section id="strategyResults" class="report-section">
                 <h2>Suggested Strategies</h2>
                 <ul id="strategyList"></ul>
             </section>
+            <div class="chart-container">
+                <canvas id="salesChart"></canvas>
+            </div>
         </div>
     </div>
     
@@ -114,16 +181,16 @@
             const strategies = [];
             
             if (salesGap <= targetSales * 0.2) {
-                strategies.push("Offer limited-time discounts to attract more customers.");
+                strategies.push("Offer limited-time discounts.");
                 strategies.push("Run social media ads targeting food lovers.");
             } else if (salesGap <= targetSales * 0.4) {
-                strategies.push("Collaborate with influencers to promote your brand.");
-                strategies.push("Introduce customer loyalty programs with rewards.");
-                strategies.push("Use email marketing for repeat customer engagement.");
+                strategies.push("Collaborate with influencers.");
+                strategies.push("Introduce customer loyalty programs.");
+                strategies.push("Use email marketing for engagement.");
             } else {
-                strategies.push("Launch aggressive digital marketing campaigns (Google, Facebook, Instagram Ads).");
+                strategies.push("Launch aggressive digital marketing campaigns.");
                 strategies.push("Host local food events or pop-up promotions.");
-                strategies.push("Offer bundled meal deals to boost order values.");
+                strategies.push("Offer bundled meal deals.");
             }
             
             strategies.forEach(strategy => {
@@ -132,6 +199,35 @@
                 strategyList.appendChild(li);
             });
         }
+
+        function downloadReport() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text("Marketing Strategy Report", 10, 10);
+            let y = 20;
+            document.querySelectorAll("#strategyList li").forEach(li => {
+                doc.text(`- ${li.textContent}`, 10, y);
+                y += 10;
+            });
+            doc.save("Marketing_Strategy_Report.pdf");
+        }
+
+        const ctx = document.getElementById("salesChart").getContext("2d");
+        new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+                datasets: [{
+                    label: "Sales Trend",
+                    data: [5000, 7000, 8000, 12000, 15000, 17000],
+                    backgroundColor: "#f1c40f"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
     </script>
 </body>
 </html>
