@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <script>
+        // Request location access on login
+        navigator.geolocation.getCurrentPosition(
+            (position) => console.log('Location accessed:', position),
+            (error) => console.error('Location access denied:', error)
+        );
+    </script>
+    
+    <div class="login-form">
+        <h2>Restaurant Registration</h2>
+        <form id="registrationForm">
+            <label>Brand/Restaurant Name: <input type="text" required></label>
+            <label>Legal Name: <input type="text" required></label>
+            <label>Authorized Person Name: <input type="text" required></label>
+            <label>Contact Number: <input type="tel" required></label>
+            <label>Location: <input type="text" required></label>
+            <label>Zomato Link: <input type="url"></label>
+            <label>Swiggy Link: <input type="url"></label>
+            <label>Instagram Link: <input type="url"></label>
+            <label>Google Map Link: <input type="url"></label>
+            <label>Current Advertisement Mode: <input type="text"></label>
+            <label>Current Ad Spend: <input type="number"></label>
+            <label>Sales Data (12 months): <input type="file" accept=".csv,.pdf" multiple></label>
+            <label>Purchase Data (12 months): <input type="file" accept=".csv,.pdf" multiple></label>
+            <label>Salaries: <input type="file" accept=".pdf" multiple></label>
+            <label>Rent: <input type="text"></label>
+            <label>Electricity: <input type="file" accept=".pdf" multiple></label>
+            <label>Other Operational Expenses: <input type="text"></label>
+            <label>Manager Access Required: <select><option>Yes</option><option>No</option></select></label>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    
+    <div class="marketing-dashboard">
+        <h2>Marketing Expenses vs. Revenue</h2>
+        <canvas id="pastDataChart"></canvas>
+        <canvas id="predictedDataChart"></canvas>
+    </div>
+    
+    <div class="marketing-options">
+        <h2>Looking for Assistance in Marketing?</h2>
+        <button>Online / UGC Content Marketing</button>
+        <button>Offline Marketing & Strategic Partnerships</button>
+        <button>Marketing on Aggregator Platforms</button>
+    </div>
+    
+    <div class="chatbot-container">
+        <button onclick="toggleChatbot()">💬 Chat with Pro</button>
+        <div class="chatbot" id="chatbot" style="display: none;">
+            <h3>Pro Chatbot</h3>
+            <p>Ask me about marketing strategies & operational decisions!</p>
+            <input type="text" id="chatInput" placeholder="Type your question...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    
+    <script>
+        function toggleChatbot() {
+            const chatbot = document.getElementById('chatbot');
+            chatbot.style.display = chatbot.style.display === 'none' ? 'block' : 'none';
+        }
+        function sendMessage() {
+            alert('This chatbot provides marketing and strategic guidance.');
+        }
+        const pastDataChart = new Chart(document.getElementById('pastDataChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['SEO', 'Email', 'Ads'],
+                datasets: [{ label: 'Past Revenue (₹)', data: [100000, 80000, 120000], backgroundColor: ['#f1c40f', '#2d3e50', '#e74c3c'] }]
+            }
+        });
+        const predictedDataChart = new Chart(document.getElementById('predictedDataChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['SEO', 'Email', 'Ads'],
+                datasets: [{ label: 'Predicted Revenue (₹)', data: [120000, 95000, 140000], backgroundColor: '#3498db', borderColor: '#3498db' }]
+            }
+        });
+    </script>
+</body>
+</html>
