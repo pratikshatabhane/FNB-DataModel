@@ -6,64 +6,151 @@
     <title>Marketing Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-group input[type="file"] {
+            padding: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .marketing-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .marketing-options button {
+            flex: 1;
+            margin: 5px;
+            padding: 15px;
+            font-size: 16px;
+            background: #17a2b8;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .marketing-options button:hover {
+            background: #138496;
+        }
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
+        .chatbot-button {
+            background: #28a745;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .chatbot {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            background: white;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            width: 250px;
+        }
+    </style>
 </head>
 <body>
-    <script>
-        // Request location access on login
-        navigator.geolocation.getCurrentPosition(
-            (position) => console.log('Location accessed:', position),
-            (error) => console.error('Location access denied:', error)
-        );
-    </script>
-    
-    <div class="login-form">
+    <div class="container">
         <h2>Restaurant Registration</h2>
         <form id="registrationForm">
-            <label>Brand/Restaurant Name: <input type="text" required></label>
-            <label>Legal Name: <input type="text" required></label>
-            <label>Authorized Person Name: <input type="text" required></label>
-            <label>Contact Number: <input type="tel" required></label>
-            <label>Location: <input type="text" required></label>
-            <label>Zomato Link: <input type="url"></label>
-            <label>Swiggy Link: <input type="url"></label>
-            <label>Instagram Link: <input type="url"></label>
-            <label>Google Map Link: <input type="url"></label>
-            <label>Current Advertisement Mode: <input type="text"></label>
-            <label>Current Ad Spend: <input type="number"></label>
-            <label>Sales Data (12 months): <input type="file" accept=".csv,.pdf" multiple></label>
-            <label>Purchase Data (12 months): <input type="file" accept=".csv,.pdf" multiple></label>
-            <label>Salaries: <input type="file" accept=".pdf" multiple></label>
-            <label>Rent: <input type="text"></label>
-            <label>Electricity: <input type="file" accept=".pdf" multiple></label>
-            <label>Other Operational Expenses: <input type="text"></label>
-            <label>Manager Access Required: <select><option>Yes</option><option>No</option></select></label>
+            <div class="form-group">
+                <label>Brand/Restaurant Name:</label>
+                <input type="text" required>
+            </div>
+            <div class="form-group">
+                <label>Legal Name:</label>
+                <input type="text" required>
+            </div>
+            <div class="form-group">
+                <label>Authorized Person Name:</label>
+                <input type="text" required>
+            </div>
+            <div class="form-group">
+                <label>Contact Number:</label>
+                <input type="tel" required>
+            </div>
+            <div class="form-group">
+                <label>Upload Sales Data (CSV/PDF):</label>
+                <input type="file" multiple>
+            </div>
             <button type="submit">Submit</button>
         </form>
     </div>
-    
-    <div class="marketing-dashboard">
+    <div class="container">
         <h2>Marketing Expenses vs. Revenue</h2>
         <canvas id="pastDataChart"></canvas>
         <canvas id="predictedDataChart"></canvas>
     </div>
-    
-    <div class="marketing-options">
+    <div class="container">
         <h2>Looking for Assistance in Marketing?</h2>
-        <button>Online / UGC Content Marketing</button>
-        <button>Offline Marketing & Strategic Partnerships</button>
-        <button>Marketing on Aggregator Platforms</button>
+        <div class="marketing-options">
+            <button>Online / UGC Content Marketing</button>
+            <button>Offline Marketing & Strategic Partnerships</button>
+            <button>Marketing on Aggregator Platforms</button>
+            <button>Conversion Rate Optimization</button>
+        </div>
     </div>
-    
     <div class="chatbot-container">
-        <button onclick="toggleChatbot()">💬 Chat with Pro</button>
-        <div class="chatbot" id="chatbot" style="display: none;">
+        <button class="chatbot-button" onclick="toggleChatbot()">💬</button>
+        <div class="chatbot" id="chatbot">
             <h3>Pro Chatbot</h3>
             <p>Ask me about marketing strategies & operational decisions!</p>
             <input type="text" id="chatInput" placeholder="Type your question...">
             <button onclick="sendMessage()">Send</button>
         </div>
     </div>
-    
     <script>
         function toggleChatbot() {
             const chatbot = document.getElementById('chatbot');
