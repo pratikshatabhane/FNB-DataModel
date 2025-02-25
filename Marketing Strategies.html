@@ -3,174 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketing Dashboard</title>
+    <title>Marketing Reports</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="chatbot.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f4f4; }
+        .container { width: 90%; margin: auto; padding: 20px; }
+        .upload-section, .detailed-report-container, .marketing-options { 
+            margin-bottom: 20px; background: white; padding: 15px; border-radius: 8px; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); 
         }
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .detailed-report { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .detailed-report th, .detailed-report td { 
+            padding: 10px; border: 1px solid #ddd; text-align: center; 
         }
-        h2 {
-            text-align: center;
-            color: #333;
+        .marketing-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+        .marketing-tabs button { 
+            flex: 1; min-width: 150px; padding: 10px; border: none; 
+            background: #f1c40f; color: #2d3e50; font-weight: bold; cursor: pointer; 
+            border-radius: 5px; transition: 0.3s; 
         }
-        .form-group {
-            margin-bottom: 15px;
+        .marketing-tabs button:hover { background: #e67e22; }
+        .chatbot-container { position: fixed; bottom: 20px; right: 20px; }
+        .chatbot { 
+            background: white; padding: 15px; border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.2); display: none; max-width: 300px; 
         }
-        .form-group label {
-            display: block;
-            font-weight: bold;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .form-group input[type="file"] {
-            padding: 5px;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        .marketing-options {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            margin-top: 20px;
-        }
-        .marketing-options button {
-            flex: 1;
-            margin: 5px;
-            padding: 15px;
-            font-size: 16px;
-            background: #17a2b8;
-            border: none;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .marketing-options button:hover {
-            background: #138496;
-        }
-        .chatbot-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-        }
-        .chatbot-button {
-            background: #28a745;
-            color: white;
-            padding: 15px;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-        .chatbot {
-            display: none;
-            position: absolute;
-            bottom: 60px;
-            right: 0;
-            background: white;
-            padding: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            width: 250px;
+        .chatbot input, .chatbot button { width: 100%; padding: 8px; margin-top: 5px; }
+        .chat-toggle { 
+            background: #f1c40f; color: #2d3e50; border: none; padding: 10px; 
+            border-radius: 50%; cursor: pointer; font-size: 16px; 
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Restaurant Registration</h2>
-        <form id="registrationForm">
-            <div class="form-group">
-                <label>Brand/Restaurant Name:</label>
-                <input type="text" required>
-            </div>
-            <div class="form-group">
-                <label>Legal Name:</label>
-                <input type="text" required>
-            </div>
-            <div class="form-group">
-                <label>Authorized Person Name:</label>
-                <input type="text" required>
-            </div>
-            <div class="form-group">
-                <label>Contact Number:</label>
-                <input type="tel" required>
-            </div>
-            <div class="form-group">
-                <label>Upload Sales Data (CSV/PDF):</label>
-                <input type="file" multiple>
-            </div>
-            <button type="submit">Submit</button>
-        </form>
-    </div>
-    <div class="container">
-        <h2>Marketing Expenses vs. Revenue</h2>
-        <canvas id="pastDataChart"></canvas>
-        <canvas id="predictedDataChart"></canvas>
-    </div>
-    <div class="container">
-        <h2>Looking for Assistance in Marketing?</h2>
-        <div class="marketing-options">
-            <button>Online / UGC Content Marketing</button>
-            <button>Offline Marketing & Strategic Partnerships</button>
-            <button>Marketing on Aggregator Platforms</button>
-            <button>Conversion Rate Optimization</button>
+        <h2>Marketing Reports</h2>
+        <div class="upload-section">
+            <h3>Upload Reports</h3>
+            <input type="file" id="fileInput" multiple>
         </div>
+        <div class="detailed-report-container">
+            <h3>Marketing Expenses vs. Revenue</h3>
+            <canvas id="reportChart"></canvas>
+        </div>
+        <section class="marketing-options">
+            <h3>Looking for Assistance in Marketing?</h3>
+            <div class="marketing-tabs">
+                <button>Online / UGC Content Marketing</button>
+                <button>Offline Marketing & Strategic Partnerships</button>
+                <button>Marketing on Aggregator Platforms</button>
+            </div>
+        </section>
     </div>
     <div class="chatbot-container">
-        <button class="chatbot-button" onclick="toggleChatbot()">💬</button>
+        <button class="chat-toggle" onclick="toggleChatbot()">💬</button>
         <div class="chatbot" id="chatbot">
             <h3>Pro Chatbot</h3>
-            <p>Ask me about marketing strategies & operational decisions!</p>
+            <p>Ask me about marketing strategies & operations decisions!</p>
             <input type="text" id="chatInput" placeholder="Type your question...">
             <button onclick="sendMessage()">Send</button>
         </div>
     </div>
     <script>
+        function sendMessage() {
+            alert('This chatbot provides marketing and strategic guidance.');
+        }
         function toggleChatbot() {
             const chatbot = document.getElementById('chatbot');
             chatbot.style.display = chatbot.style.display === 'none' ? 'block' : 'none';
         }
-        function sendMessage() {
-            alert('This chatbot provides marketing and strategic guidance.');
-        }
-        const pastDataChart = new Chart(document.getElementById('pastDataChart').getContext('2d'), {
+        const reportChartContext = document.getElementById('reportChart').getContext('2d');
+        new Chart(reportChartContext, {
             type: 'bar',
             data: {
                 labels: ['SEO', 'Email', 'Ads'],
-                datasets: [{ label: 'Past Revenue (₹)', data: [100000, 80000, 120000], backgroundColor: ['#f1c40f', '#2d3e50', '#e74c3c'] }]
-            }
-        });
-        const predictedDataChart = new Chart(document.getElementById('predictedDataChart').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: ['SEO', 'Email', 'Ads'],
-                datasets: [{ label: 'Predicted Revenue (₹)', data: [120000, 95000, 140000], backgroundColor: '#3498db', borderColor: '#3498db' }]
+                datasets: [{ label: 'Revenue (₹)', data: [100000, 80000, 120000], backgroundColor: ['#f1c40f', '#2d3e50', '#e74c3c'] }]
             }
         });
     </script>

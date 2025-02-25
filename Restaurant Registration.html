@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-group input[type="file"] {
+            padding: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .marketing-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .marketing-options button {
+            flex: 1;
+            margin: 5px;
+            padding: 15px;
+            font-size: 16px;
+            background: #17a2b8;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .marketing-options button:hover {
+            background: #138496;
+        }
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
+        .chatbot-button {
+            background: #28a745;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .chatbot {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            background: white;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            width: 250px;
+        }
+        .chatbot-messages {
+            height: 150px;
+            overflow-y: auto;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+        }
+        .chatbot-messages p {
+            background: #f1f1f1;
+            padding: 5px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Restaurant Registration</h2>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label>Brand/Restaurant Name:</label>
+                <input type="text" required>
+            </div>
+            <div class="form-group">
+                <label>Legal Name:</label>
+                <input type="text" required>
+            </div>
+            <div class="form-group">
+                <label>Authorized Person Name:</label>
+                <input type="text" required>
+            </div>
+            <div class="form-group">
+                <label>Authorized Person Contact Number:</label>
+                <input type="tel" required>
+            </div>
+            <div class="form-group">
+                <label>Location:</label>
+                <input type="text" required>
+            </div>
+            <div class="form-group">
+                <label>Zomato Link:</label>
+                <input type="url">
+            </div>
+            <div class="form-group">
+                <label>Swiggy Link:</label>
+                <input type="url">
+            </div>
+            <div class="form-group">
+                <label>Instagram Link:</label>
+                <input type="url">
+            </div>
+            <div class="form-group">
+                <label>Google Map Link:</label>
+                <input type="url">
+            </div>
+            <div class="form-group">
+                <label>Marketing Assistance:</label>
+                <select>
+                    <option>Online / UGC content marketing</option>
+                    <option>Offline marketing and strategic partnerships</option>
+                    <option>Marketing on Aggregator Platforms</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Upload Reports (Multiple Files):</label>
+                <input type="file" multiple>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <div class="chatbot-container">
+        <button class="chatbot-button">💬</button>
+        <div class="chatbot">
+            <div class="chatbot-messages"></div>
+            <input type="text" placeholder="Ask about marketing...">
+        </div>
+    </div>
+</body>
+</html>

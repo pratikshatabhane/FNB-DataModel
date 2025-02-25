@@ -3,87 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketing Dashboard</title>
+    <title>Pro Marketing Strategy</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* Full Page Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef2f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .dashboard {
+            display: flex;
+            width: 100%;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 250px;
+            background: #2d3e50;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #f1c40f;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+        }
+        .sidebar ul li i {
+            margin-right: 10px;
+        }
+        .sidebar ul li:hover {
+            background: #f1c40f;
+            color: #2d3e50;
+        }
+        .active {
+            background: #f1c40f;
+            color: #2d3e50;
+        }
+
+        /* Main Content Styling */
+        .content {
+            margin-left: 280px;
+            padding: 40px;
+            width: calc(100% - 280px);
+        }
+        header h1 {
+            color: #2d3e50;
+            font-size: 24px;
+        }
+
+        /* Input Section */
+        .input-section {
+            margin-bottom: 20px;
+        }
+        .input-section input {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .input-section button {
+            padding: 8px 12px;
+            background: #f1c40f;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            color: #2d3e50;
+            font-weight: bold;
+        }
+        .input-section button:hover {
+            background: #d4ac0d;
+        }
+
+        /* Strategy List */
+        .report-section {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .report-section h2 {
+            color: #2d3e50;
+        }
+        .report-section ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        .report-section li {
+            margin: 5px 0;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            width: 100%;
+            height: 450px;
+            margin: 20px auto;
+        }
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+    </style>
 </head>
 <body>
-    <script>
-        // Request location access on login
-        navigator.geolocation.getCurrentPosition(
-            (position) => console.log('Location accessed:', position),
-            (error) => console.error('Location access denied:', error)
-        );
-    </script>
-    
-    <div class="login-form">
-        <h2>Restaurant Registration</h2>
-        <form id="registrationForm">
-            <label>Brand/Restaurant Name: <input type="text" required></label>
-            <label>Legal Name: <input type="text" required></label>
-            <label>Authorized Person Name: <input type="text" required></label>
-            <label>Contact Number: <input type="tel" required></label>
-            <label>Location: <input type="text" required></label>
-            <label>Zomato Link: <input type="url"></label>
-            <label>Swiggy Link: <input type="url"></label>
-            <label>Instagram Link: <input type="url"></label>
-            <label>Google Map Link: <input type="url"></label>
-            <label>Current Advertisement Mode: <input type="text"></label>
-            <label>Current Ad Spend: <input type="number"></label>
-            <label>Sales Data (12 months): <input type="file" accept=".csv,.pdf" multiple></label>
-            <label>Purchase Data (12 months): <input type="file" accept=".csv,.pdf" multiple></label>
-            <label>Salaries: <input type="file" accept=".pdf" multiple></label>
-            <label>Rent: <input type="text"></label>
-            <label>Electricity: <input type="file" accept=".pdf" multiple></label>
-            <label>Other Operational Expenses: <input type="text"></label>
-            <label>Manager Access Required: <select><option>Yes</option><option>No</option></select></label>
-            <button type="submit">Submit</button>
-        </form>
-    </div>
-    
-    <div class="marketing-dashboard">
-        <h2>Marketing Expenses vs. Revenue</h2>
-        <canvas id="pastDataChart"></canvas>
-        <canvas id="predictedDataChart"></canvas>
-    </div>
-    
-    <div class="marketing-options">
-        <h2>Looking for Assistance in Marketing?</h2>
-        <button>Online / UGC Content Marketing</button>
-        <button>Offline Marketing & Strategic Partnerships</button>
-        <button>Marketing on Aggregator Platforms</button>
-    </div>
-    
-    <div class="chatbot-container">
-        <button onclick="toggleChatbot()">💬 Chat with Pro</button>
-        <div class="chatbot" id="chatbot" style="display: none;">
-            <h3>Pro Chatbot</h3>
-            <p>Ask me about marketing strategies & operational decisions!</p>
-            <input type="text" id="chatInput" placeholder="Type your question...">
-            <button onclick="sendMessage()">Send</button>
+    <div class="dashboard">
+        <nav class="sidebar">
+            <h2>📊 Pro Features</h2>
+            <ul>
+                <li><a href="index.html"><i>🏠</i>Dashboard</a></li>
+                <li><a href="sales.html" class="active"><i>📊</i>Sales Report</a></li>
+                <li><a href=" Marketing Reports.html"><i>📢</i>Marketing Strategies</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <header>
+                <h1>📢 Marketing Strategy Suggestions</h1>
+            </header>
+            <div class="input-section">
+                <label>Current Sales (₹): </label>
+                <input type="number" id="currentSales" placeholder="Enter current sales">
+                <label>Target Sales (₹): </label>
+                <input type="number" id="targetSales" placeholder="Enter target sales">
+                <button onclick="generateStrategies()">Get Strategies</button>
+                <button onclick="downloadReport()">Download Report</button>
+            </div>
+            <section id="strategyResults" class="report-section">
+                <h2>Suggested Strategies</h2>
+                <ul id="strategyList"></ul>
+            </section>
+            <div class="chart-container">
+                <canvas id="salesChart"></canvas>
+            </div>
         </div>
     </div>
     
     <script>
-        function toggleChatbot() {
-            const chatbot = document.getElementById('chatbot');
-            chatbot.style.display = chatbot.style.display === 'none' ? 'block' : 'none';
-        }
-        function sendMessage() {
-            alert('This chatbot provides marketing and strategic guidance.');
-        }
-        const pastDataChart = new Chart(document.getElementById('pastDataChart').getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: ['SEO', 'Email', 'Ads'],
-                datasets: [{ label: 'Past Revenue (₹)', data: [100000, 80000, 120000], backgroundColor: ['#f1c40f', '#2d3e50', '#e74c3c'] }]
+        function generateStrategies() {
+            const currentSales = parseFloat(document.getElementById("currentSales").value);
+            const targetSales = parseFloat(document.getElementById("targetSales").value);
+            const strategyList = document.getElementById("strategyList");
+            strategyList.innerHTML = "";
+
+            if (isNaN(currentSales) || isNaN(targetSales) || currentSales >= targetSales) {
+                alert("Please enter valid sales values.");
+                return;
             }
-        });
-        const predictedDataChart = new Chart(document.getElementById('predictedDataChart').getContext('2d'), {
-            type: 'line',
+            
+            const salesGap = targetSales - currentSales;
+            const strategies = [];
+            
+            if (salesGap <= targetSales * 0.2) {
+                strategies.push("Offer limited-time discounts.");
+                strategies.push("Run social media ads targeting food lovers.");
+            } else if (salesGap <= targetSales * 0.4) {
+                strategies.push("Collaborate with influencers.");
+                strategies.push("Introduce customer loyalty programs.");
+                strategies.push("Use email marketing for engagement.");
+            } else {
+                strategies.push("Launch aggressive digital marketing campaigns.");
+                strategies.push("Host local food events or pop-up promotions.");
+                strategies.push("Offer bundled meal deals.");
+            }
+            
+            strategies.forEach(strategy => {
+                const li = document.createElement("li");
+                li.textContent = strategy;
+                strategyList.appendChild(li);
+            });
+        }
+
+        function downloadReport() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text("Marketing Strategy Report", 10, 10);
+            let y = 20;
+            document.querySelectorAll("#strategyList li").forEach(li => {
+                doc.text(`- ${li.textContent}`, 10, y);
+                y += 10;
+            });
+            doc.save("Marketing_Strategy_Report.pdf");
+        }
+
+        const ctx = document.getElementById("salesChart").getContext("2d");
+        new Chart(ctx, {
+            type: "bar",
             data: {
-                labels: ['SEO', 'Email', 'Ads'],
-                datasets: [{ label: 'Predicted Revenue (₹)', data: [120000, 95000, 140000], backgroundColor: '#3498db', borderColor: '#3498db' }]
+                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+                datasets: [{
+                    label: "Sales Trend",
+                    data: [5000, 7000, 8000, 12000, 15000, 17000],
+                    backgroundColor: "#f1c40f"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
             }
         });
     </script>
