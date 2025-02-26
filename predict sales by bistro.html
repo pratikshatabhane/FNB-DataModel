@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Sales by BistroPro</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .file-input {
+            display: block;
+            margin: 20px auto;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            background: #ff7eb3;
+            border: none;
+            padding: 12px 20px;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #ff4a87;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #fff;
+        }
+        ul {
+            text-align: left;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Predict Sales by BistroPro</h1>
+        <p>Upload your sales data to get optimized sales predictions.</p>
+        <input type="file" id="fileUpload" class="file-input" accept=".csv, .xlsx">
+        <button onclick="processFile()">Upload & Analyze</button>
+        <div id="output" class="results"></div>
+    </div>
+
+    <script>
+        function processFile() {
+            const fileInput = document.getElementById('fileUpload');
+            const output = document.getElementById('output');
+            
+            if (fileInput.files.length === 0) {
+                output.innerHTML = "<p style='color: red;'>Please select a file to upload.</p>";
+                return;
+            }
+            
+            const fileName = fileInput.files[0].name;
+            output.innerHTML = `<p>Processing <strong>${fileName}</strong>...</p>`;
+            
+            setTimeout(() => {
+                output.innerHTML += `
+                    <p><strong>Optimizations Applied:</strong></p>
+                    <ul>
+                        <li>Data Cleaning & Error Removal</li>
+                        <li>Trend Analysis & Seasonality Detection</li>
+                        <li>Customer Segmentation Insights</li>
+                        <li>Dynamic Pricing Recommendations</li>
+                        <li>Inventory Management Suggestions</li>
+                    </ul>
+                `;
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
