@@ -6,53 +6,66 @@
     <title>Marketing Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            display: flex;
         }
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .dashboard {
+            display: flex;
+            width: 100%;
         }
-        h2 {
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(180deg, #fbbf24, #ffd700);
+            color: black;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar h2 {
             text-align: center;
-            color: #333;
+            font-weight: bold;
+            color: black;
         }
-        .form-group {
-            margin-bottom: 15px;
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
         }
-        .form-group label {
+        .sidebar ul li {
+            padding: 15px;
+            text-align: left;
+            transition: 0.3s;
+            border-radius: 5px;
+        }
+        .sidebar ul li a {
+            color: black;
+            text-decoration: none;
             display: block;
             font-weight: bold;
         }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+        .sidebar ul li:hover {
+            background: white;
+            transform: scale(1.05);
         }
-        .form-group input[type="file"] {
-            padding: 5px;
+        .content {
+            margin-left: 260px;
+            padding: 20px;
+            width: calc(100% - 260px);
         }
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        .upload-container {
+            text-align: center;
+            margin-bottom: 20px;
         }
-        button:hover {
-            background: #0056b3;
+        .upload-container input {
+            margin: 10px 0;
         }
         .marketing-options {
             display: flex;
@@ -71,91 +84,125 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        .marketing-options button:hover {
-            background: #138496;
-        }
-        .chatbot-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-        }
-        .chatbot-button {
-            background: #28a745;
-            color: white;
-            padding: 15px;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-        .chatbot {
+        .marketing-content {
             display: none;
-            position: absolute;
-            bottom: 60px;
-            right: 0;
             background: white;
             padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            width: 250px;
-        }
-        .chatbot-messages {
-            height: 150px;
-            overflow-y: auto;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-        }
-        .chatbot-messages p {
-            background: #f1f1f1;
-            padding: 5px;
-            border-radius: 5px;
         }
         .graph-container {
             display: flex;
             justify-content: space-around;
             margin-top: 20px;
         }
-        canvas {
-            background: #fff;
-            border-radius: 5px;
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Marketing Dashboard</h2>
-        <div class="marketing-options">
-            <button>Online / UGC Content Marketing</button>
-            <button>Offline Marketing & Strategic Partnerships</button>
-            <button>Marketing on Aggregator Platforms</button>
-        </div>
-        <div class="graph-container">
-            <canvas id="pastDataChart" width="400" height="200"></canvas>
-            <canvas id="predictionChart" width="400" height="200"></canvas>
+    <div class="dashboard">
+        <nav class="sidebar">
+            <h2>📊 Menu</h2>
+            <ul>
+                <li><a href="index.html">🏠 Dashboard</a></li>
+                <li><a href="sales.html">📊 Sales Report</a></li>
+                <li><a href="Purchase Report.html">🛒 Purchase Report</a></li>
+                <li><a href="Inventory Report.html">📦 Inventory Report</a></li>
+                <li><a href="Manpower Analysis.html">👥 Manpower Analysis</a></li>
+                <li><a href="Expense Overview.html">💰 Expense Overview</a></li>
+                <li><a href="Marketing Strategies.html">📈 Marketing Dashboard</a></li>
+            </ul>
+        </nav>
+        <div class="content">
+            <header>
+                <h1>📈 Marketing Dashboard</h1>
+            </header>
+            <div class="upload-container">
+                <label for="csvUpload">Upload Marketing Data (CSV):</label>
+                <input type="file" id="csvUpload" accept=".csv" multiple>
+                <button onclick="processCSV()">Submit</button>
+            </div>
+            <div class="marketing-options">
+                <button onclick="showContent('ugcContent')">Online / UGC Content Marketing</button>
+                <button onclick="showContent('offlineMarketing')">Offline Marketing & Strategic Partnerships</button>
+                <button onclick="showContent('aggregatorMarketing')">Marketing on Aggregator Platforms</button>
+            </div>
+            <div id="ugcContent" class="marketing-content">📢 Strategies for Online / UGC Content Marketing: Focus on influencer partnerships, customer-generated content, and engagement strategies.</div>
+            <div id="offlineMarketing" class="marketing-content">🏢 Strategies for Offline Marketing & Strategic Partnerships: Collaborate with local businesses, print media, and in-person promotions.</div>
+            <div id="aggregatorMarketing" class="marketing-content">🛒 Strategies for Marketing on Aggregator Platforms: Optimize listings, run targeted promotions, and maintain high ratings.</div>
+            <div class="graph-container">
+                <canvas id="pastDataChart" width="400" height="200"></canvas>
+                <canvas id="predictionChart" width="400" height="200"></canvas>
+            </div>
         </div>
     </div>
-    <div class="chatbot-container">
-        <button class="chatbot-button">💬</button>
-        <div class="chatbot">
-            <div class="chatbot-messages"></div>
-            <input type="text" placeholder="Ask about marketing...">
-        </div>
-    </div>
+
     <script>
-        document.querySelector('.chatbot-button').addEventListener('click', function() {
-            document.querySelector('.chatbot').style.display = 'block';
-        });
-        const ctx1 = document.getElementById('pastDataChart').getContext('2d');
-        new Chart(ctx1, {
-            type: 'line',
-            data: { labels: ['Jan', 'Feb', 'Mar'], datasets: [{ label: 'Past Data', data: [100, 200, 150], borderColor: 'blue' }] }
-        });
-        const ctx2 = document.getElementById('predictionChart').getContext('2d');
-        new Chart(ctx2, {
-            type: 'line',
-            data: { labels: ['Apr', 'May', 'Jun'], datasets: [{ label: 'Predictions', data: [180, 220, 200], borderColor: 'red' }] }
-        });
+        function showContent(contentId) {
+            document.querySelectorAll('.marketing-content').forEach(content => {
+                content.style.display = "none";
+            });
+            document.getElementById(contentId).style.display = "block";
+        }
+
+        function processCSV() {
+            const files = document.getElementById("csvUpload").files;
+            if (files.length === 0) {
+                alert("Please upload at least one CSV file.");
+                return;
+            }
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const csvData = event.target.result.split("\n").slice(1);
+                    const labels = [];
+                    const values = [];
+                    csvData.forEach(row => {
+                        const cols = row.split(",");
+                        if (cols.length >= 2) {
+                            labels.push(cols[0].trim());
+                            values.push(parseFloat(cols[1].trim()));
+                        }
+                    });
+                    updateChart({ labels, values });
+                };
+                reader.readAsText(file);
+            });
+        }
+
+        function updateChart(data) {
+            const ctx = document.getElementById("pastDataChart").getContext("2d");
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: "Marketing Performance",
+                        data: data.values,
+                        borderColor: "#fbbf24",
+                        backgroundColor: "rgba(251, 191, 36, 0.3)",
+                        borderWidth: 3,
+                        pointRadius: 6,
+                        pointBackgroundColor: "#fbbf24",
+                        pointHoverRadius: 8,
+                    }]
+                }
+            });
+
+            const pieCtx = document.getElementById("predictionChart").getContext("2d");
+            new Chart(pieCtx, {
+                type: "pie",
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: "Marketing Strategy Impact",
+                        data: data.values,
+                        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4CAF50", "#FF9800"]
+                    }]
+                }
+            });
+        }
     </script>
 </body>
 </html>
