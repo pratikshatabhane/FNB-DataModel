@@ -6,6 +6,7 @@
     <title>Sales Report</title>
     <link rel="stylesheet" href="reports.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -77,17 +78,6 @@
             font-weight: bold;
             font-size: 16px;
         }
-        .filter-options {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .filter-options select, .upload-container input, .upload-container button {
-            padding: 8px;
-            font-size: 14px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            margin: 5px;
-        }
         .upload-container {
             text-align: center;
             margin-bottom: 20px;
@@ -99,7 +89,7 @@
         <nav class="sidebar">
             <h2>Menu</h2>
             <ul>
-                <li><a href="index.html">🏠 Dashboard</a></li>
+                <li><a href="F&B Analytics Dashboard.html">🏠 Dashboard</a></li>
                 <li><a href="sales.html">📊 Sales Report</a></li>
                 <li><a href="Purchase Report.html">🛒 Purchase Report</a></li>
                 <li><a href="Inventory Report.html">📦 Inventory Report</a></li>
@@ -115,83 +105,30 @@
             <div class="alert">🚀 Upgrade to Pro for Advanced Sales Insights!</div>
             
             <div class="upload-container">
-                <label for="csvUpload">Upload CSV File:</label>
-                <input type="file" id="csvUpload" accept=".csv">
-                <button onclick="processCSV()">Submit</button>
-            </div>
-            <div class="upload-container">
-                <label for="csvUpload">Upload CSV File:</label>
-                <input type="file" id="csvUpload" accept=".csv">
-                <button onclick="processCSV()">Submit</button>
-            </div>
-            <div class="upload-container">
-                <label for="csvUpload">Upload CSV File:</label>
+                <label for="csvUpload">Upload Sales Report (CSV):</label>
                 <input type="file" id="csvUpload" accept=".csv">
                 <button onclick="processCSV()">Submit</button>
             </div>
             
-            <div class="filter-options">
-                <label for="report-range">View Report By: </label>
-                <select id="report-range" onchange="updateChart()">
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly" selected>Monthly</option>
-                    <option value="quarterly">Quarterly</option>
-                    <option value="yearly">Yearly</option>
-                </select>
+            <div class="upload-container">
+                <label for="itemSalesUpload">Upload Item-wise Sales Report (CSV):</label>
+                <input type="file" id="itemSalesUpload" accept=".csv">
+                <button onclick="processItemCSV()">Submit</button>
             </div>
             
             <section id="sales" class="report-section">
                 <h2>Sales Performance</h2>
-                <p>Track your sales performance over different time periods.</p>
                 <canvas id="salesChart"></canvas>
             </section>
             
             <section id="salesOverview" class="report-section">
-                <h2>Sales Overview</h2>
-                <p>Breakdown of total sales in a pie chart.</p>
+                <h2>Sales Overview (Category-wise)</h2>
                 <canvas id="salesPieChart"></canvas>
             </section>
         </div>
     </div>
     
     <script>
-        function updateChart(data) {
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        label: 'Sales',
-                        data: data.values,
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                }
-            });
-
-            const pieCtx = document.getElementById('salesPieChart').getContext('2d');
-            new Chart(pieCtx, {
-                type: 'pie',
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        label: 'Sales Distribution',
-                        data: data.values,
-                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#FF9800']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                }
-            });
-        }
-
         function processCSV() {
             const fileInput = document.getElementById('csvUpload').files[0];
             if (!fileInput) {
@@ -214,7 +151,58 @@
             };
             reader.readAsText(fileInput);
         }
+        
+        function processItemCSV() {
+            const fileInput = document.getElementById('itemSalesUpload').files[0];
+            if (!fileInput) {
+                alert("Please upload a CSV file");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const csvData = event.target.result.split('\n').slice(1);
+                const categoryCounts = {};
+                csvData.forEach(row => {
+                    const cols = row.split(',');
+                    if (cols.length >= 2) {
+                        const category = cols[0].trim();
+                        const count = parseInt(cols[1].trim());
+                        categoryCounts[category] = (categoryCounts[category] || 0) + count;
+                    }
+                });
+                updatePieChart(categoryCounts);
+            };
+            reader.readAsText(fileInput);
+        }
+        
+        function updateChart(data) {
+            new Chart(document.getElementById('salesChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Sales',
+                        data: data.values,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                }
+            });
+        }
+        
+        function updatePieChart(categoryCounts) {
+            new Chart(document.getElementById('salesPieChart').getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(categoryCounts),
+                    datasets: [{
+                        data: Object.values(categoryCounts),
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#FF9800']
+                    }]
+                }
+            });
+        }
     </script>
-    
 </body>
 </html>

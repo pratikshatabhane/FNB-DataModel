@@ -6,7 +6,7 @@
     <title>Marketing Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -118,9 +118,9 @@
                 <h1>📈 Marketing Dashboard</h1>
             </header>
             <div class="upload-container">
-                <label for="csvUpload">Upload Marketing Data (CSV):</label>
-                <input type="file" id="csvUpload" accept=".csv" multiple>
-                <button onclick="processCSV()">Submit</button>
+                <label for="pdfUpload">Upload Marketing Data (PDF):</label>
+                <input type="file" id="pdfUpload" accept=".pdf" multiple>
+                <button onclick="processPDF()">Submit</button>
             </div>
             <div class="marketing-options">
                 <button onclick="showContent('ugcContent')">Online / UGC Content Marketing</button>
@@ -145,63 +145,13 @@
             document.getElementById(contentId).style.display = "block";
         }
 
-        function processCSV() {
-            const files = document.getElementById("csvUpload").files;
+        function processPDF() {
+            const files = document.getElementById("pdfUpload").files;
             if (files.length === 0) {
-                alert("Please upload at least one CSV file.");
+                alert("Please upload at least one PDF file.");
                 return;
             }
-
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    const csvData = event.target.result.split("\n").slice(1);
-                    const labels = [];
-                    const values = [];
-                    csvData.forEach(row => {
-                        const cols = row.split(",");
-                        if (cols.length >= 2) {
-                            labels.push(cols[0].trim());
-                            values.push(parseFloat(cols[1].trim()));
-                        }
-                    });
-                    updateChart({ labels, values });
-                };
-                reader.readAsText(file);
-            });
-        }
-
-        function updateChart(data) {
-            const ctx = document.getElementById("pastDataChart").getContext("2d");
-            new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        label: "Marketing Performance",
-                        data: data.values,
-                        borderColor: "#fbbf24",
-                        backgroundColor: "rgba(251, 191, 36, 0.3)",
-                        borderWidth: 3,
-                        pointRadius: 6,
-                        pointBackgroundColor: "#fbbf24",
-                        pointHoverRadius: 8,
-                    }]
-                }
-            });
-
-            const pieCtx = document.getElementById("predictionChart").getContext("2d");
-            new Chart(pieCtx, {
-                type: "pie",
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        label: "Marketing Strategy Impact",
-                        data: data.values,
-                        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4CAF50", "#FF9800"]
-                    }]
-                }
-            });
+            alert("PDF processing not implemented yet.");
         }
     </script>
 </body>
