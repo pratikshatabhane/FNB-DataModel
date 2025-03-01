@@ -106,13 +106,13 @@
             
             <div class="upload-container">
                 <label for="csvUpload">Upload Sales Report (CSV):</label>
-                <input type="file" id="csvUpload" accept=".csv">
+                <input type="file" id="csvUpload" accept=".csv" multiple>
                 <button onclick="processCSV()">Submit</button>
             </div>
             
             <div class="upload-container">
                 <label for="itemSalesUpload">Upload Item-wise Sales Report (CSV):</label>
-                <input type="file" id="itemSalesUpload" accept=".csv">
+                <input type="file" id="itemSalesUpload" accept=".csv" multiple>
                 <button onclick="processItemCSV()">Submit</button>
             </div>
             
@@ -129,42 +129,73 @@
     </div>
     
     <script>
-        let salesPieChart;
+        let salesChart, salesPieChart;
         
-        function processItemCSV() {
-            const fileInput = document.getElementById('itemSalesUpload').files[0];
-            if (!fileInput) {
-                alert("Please upload a CSV file");
+        function processCSV() {
+            const files = document.getElementById('csvUpload').files;
+            if (!files.length) {
+                alert("Please upload at least one CSV file");
                 return;
             }
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const csvData = event.target.result.split('\n').slice(1);
-                const categoryCounts = {};
-                csvData.forEach(row => {
-                    const cols = row.split(',');
-                    if (cols.length >= 2) {
-                        const category = cols[0].trim();
-                        const count = parseInt(cols[1].trim());
-                        categoryCounts[category] = (categoryCounts[category] || 0) + count;
-                    }
-                });
-                updatePieChart(categoryCounts);
-            };
-            reader.readAsText(fileInput);
+            
+            let labels = [];
+            let values = [];
+            
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const csvData = event.target.result.split('\n').slice(1);
+                    csvData.forEach(row => {
+                        const cols = row.split(',');
+                        if (cols.length >= 2) {
+                            labels.push(cols[0].trim());
+                            values.push(parseFloat(cols[1].trim()));
+                        }
+                    });
+                    updateChart(labels, values);
+                };
+                reader.readAsText(file);
+            });
         }
         
-        function updatePieChart(categoryCounts) {
-            if (salesPieChart) {
-                salesPieChart.destroy();
+        function processItemCSV() {
+            const files = document.getElementById('itemSalesUpload').files;
+            if (!files.length) {
+                alert("Please upload at least one CSV file");
+                return;
             }
-            salesPieChart = new Chart(document.getElementById('salesPieChart').getContext('2d'), {
-                type: 'pie',
+            
+            let categoryCounts = {};
+            
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const csvData = event.target.result.split('\n').slice(1);
+                    csvData.forEach(row => {
+                        const cols = row.split(',');
+                        if (cols.length >= 2) {
+                            const category = cols[0].trim();
+                            const count = parseInt(cols[1].trim());
+                            categoryCounts[category] = (categoryCounts[category] || 0) + count;
+                        }
+                    });
+                    updatePieChart(categoryCounts);
+                };
+                reader.readAsText(file);
+            });
+        }
+        
+        function updateChart(labels, values) {
+            if (salesChart) salesChart.destroy();
+            let ctx = document.getElementById('salesChart').getContext('2d');
+            salesChart = new Chart(ctx, {
+                type: 'bar',
                 data: {
-                    labels: Object.keys(categoryCounts),
+                    labels: labels,
                     datasets: [{
-                        data: Object.values(categoryCounts),
-                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#FF9800']
+                        label: 'Sales Performance',
+                        data: values,
+                        backgroundColor: 'blue'
                     }]
                 }
             });
